@@ -546,8 +546,7 @@
             "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header bank-header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos Digital Bank' /><span class='bank-name'>1Kosmos Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Session Ended</h1><p class='card-description'>You have been securely logged out of 1Kosmos Digital Bank.</p></div></div><div class='card-content-steps'><div class='step'><div class='status-card success-status'><div class='status-icon'>&#128274;</div><div class='status-details'><p class='status-title'>Secure Logout Complete</p><p class='status-desc'>Your banking session has been terminated and all temporary credentials have been cleared from this device. Thank you for banking with 1Kosmos Digital Bank.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Secured by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos' /></div></div></div></section></div></main>"
           }
         ],
-        "on_next_button_label": "Start New Session",
-        "on_next": "welcome_form",
+        "return_summary": true,
         "is_terminal_node": true
       },
 
@@ -571,9 +570,7 @@
             "type": "html",
             "html": "<main class='consent-screen'><div class='content-wrapper'><section class='error-card'><header class='header bank-header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos Digital Bank' /><span class='bank-name'>1Kosmos Digital Bank</span></header><div class='card-content'><div class='error-steps'><div class='step-error'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='error' /><p class='error-label'>Unexpected Error</p><p class='error-description'>An unexpected error occurred. Please return to the browser tab where you started and request a new session. If this persists, contact support@1kosmosbank.com.</p></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Secured by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos' /></div></div></div></section></div></main>"
           }
-        ],
-        "on_next_button_label": "Start Over",
-        "on_next": "welcome_form"
+        ]
       }
 
     ],
