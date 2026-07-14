@@ -1,0 +1,634 @@
+{
+  "data": {
+    "type": "idv-ial2",
+    "piiOn": false,
+    "poiOn": true,
+    "version": "v1",
+    "name": "Digital_Banking_Demo",
+    "tenantId": "<TENANT_ID>",
+    "dvcId": "<DVC_ID>",
+    "nodes": [
+      {
+        "type": "form",
+        "id": "welcome_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Open a Digital Bank Account</h1><p class='card-description'>In order to open your account, we need to verify your identity.</p></div></div><div class='card-content-steps'><div class='step'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='logo' /><p class='step-label'>Selfie check</p></div><div class='step'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_document.svg' alt='logo' /><p class='step-label'>ID capture</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Start Verification",
+        "on_next": "camera_check_onboarding",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "camera_check_onboarding",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "check_resolution": true,
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Let's Check Your Camera</h1><p class='card-description'>We'll make sure your camera meets the requirements for a smooth verification.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions so we can run a quick camera check.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Allow Camera Permissions",
+        "on_next": "liveid_capture_onboarding",
+        "on_error": "generic_error",
+        "on_check_resolution_fail": "onboarding_qr_handoff",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920
+      },
+      {
+        "type": "form",
+        "id": "selfie_try_again_onboarding",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed</p><p class='error-description'>We couldn't verify you. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "liveid_capture_onboarding"
+      },
+      {
+        "type": "liveid_capture",
+        "id": "liveid_capture_onboarding",
+        "check_resolution": true,
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "render_style": "iframe",
+        "on_success": "doc_intro_form",
+        "on_fail": "selfie_try_again_onboarding",
+        "on_check_resolution_fail": "onboarding_qr_handoff",
+        "on_error": "generic_error",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920,
+        "authtype": "none",
+        "purpose": "enroll",
+        "scopes": "wallet,selfie,liveness_score,face_compare_score"
+      },
+      {
+        "type": "form",
+        "id": "doc_intro_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>ID Capture</h1><p class='card-description'>You'll need to provide a government-issued document to confirm your identity.</p></div></div><div class='card-content-steps'><div class='step'><div class='document-list'><div class='document-item'><p class='document-label'>Passport or Passport Card</p></div><div class='document-item'><p class='document-label'>Driver's License or State ID</p></div></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "doc_capture_onboarding",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "doc_scan_retry_onboarding",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed</p><p class='error-description'>We couldn't scan your document. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "doc_capture_onboarding"
+      },
+      {
+        "type": "photo_id_capture",
+        "id": "doc_capture_onboarding",
+        "render_style": "full_frame",
+        "check_resolution": true,
+        "on_success": "create_customer_account",
+        "on_fail": "doc_scan_retry_onboarding",
+        "on_check_resolution_fail": "onboarding_qr_handoff",
+        "on_error": "generic_error",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920
+      },
+      {
+        "type": "js",
+        "id": "create_customer_account",
+        "name": "Create Customer Account",
+        "config": {
+          "js_code": "let url = '<BANK_CREATE_CUSTOMER_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', faceCompareScore: params.nodes.liveid_capture_onboarding.face_compare_score, livenessScore: params.nodes.liveid_capture_onboarding.liveness_score }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "onboarding_success",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "onboarding_success",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Account Created</h1><p class='card-description'>Your identity has been verified and your account has been created. You can now sign in to Digital Bank.</p></div></div><div class='card-content-steps'><div class='success-note'><p>Note: Please continue to the login page to access your new account.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "is_terminal_node": true,
+        "return_summary": true
+      },
+      {
+        "type": "qr_for_device_handoff",
+        "id": "onboarding_qr_handoff",
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Switch Device</h1><p class='card-description'>Your device does not meet camera requirements. Continue on your mobile phone.</p></div></div><div class='card-content-steps'><div class='step'>{placeholder_for_qrcode}<div class='instructions'><p class='instructions-title'>How it works</p><ul class='instruction-list'><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Scan the QR code with the 1Kosmos Mobile App.</p></li><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Approve the request on your phone to continue.</p></li></ul></div></div></div></div><div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "login_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Sign In</h1><p class='card-description'>Enter your email to sign in to Digital Bank.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          },
+          {
+            "type": "email",
+            "required": "true",
+            "name": "email",
+            "label": "Email: "
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "check_customer_login",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "check_customer_login",
+        "name": "Check Customer Login",
+        "config": {
+          "js_code": "let url = '<BANK_LOGIN_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', username: params.nodes.login_form.email }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "route_login_result",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "route_login_result",
+        "name": "Route Login Result",
+        "config": {
+          "js_code": "if (params.nodes.check_customer_login.respData.message === 'User not found') { next = 'login_invalid'; } else { next = 'qr_passwordless_login'; } return {next};"
+        },
+        "on_success": "",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "login_invalid",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Sign In Failed</p><p class='error-description'>We couldn't find an account with that email. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "login_form"
+      },
+      {
+        "type": "qr_for_device_handoff",
+        "id": "qr_passwordless_login",
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Switch Device</h1><p class='card-description'>Your device does not meet camera requirements. Continue on your mobile phone.</p></div></div><div class='card-content-steps'><div class='step'>{placeholder_for_qrcode}<div class='instructions'><p class='instructions-title'>How it works</p><ul class='instruction-list'><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Scan the QR code with the 1Kosmos Mobile App.</p></li><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Approve the request on your phone to continue.</p></li></ul></div></div></div></div><div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "transfer_request_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Review Transfer</h1><p class='card-description'>We are reviewing your transfer request against our security policy.</p></div></div><div class='card-content-steps'><div class='step'><p class='camera-permission-text'>This may take a moment. Please do not close this window.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "evaluate_transfer_policy",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "evaluate_transfer_policy",
+        "name": "Evaluate Transfer Policy",
+        "config": {
+          "js_code": "let url = '<BANK_POLICY_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>' }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "route_transfer_policy",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "route_transfer_policy",
+        "name": "Route Transfer Policy Decision",
+        "config": {
+          "js_code": "if (params.nodes.evaluate_transfer_policy.respData.stepUpRequired === true) { next = 'transfer_camera_check'; } else { next = 'complete_transfer'; } return {next};"
+        },
+        "on_success": "",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "transfer_camera_check",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "check_resolution": true,
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Step-Up Verification Required</h1><p class='card-description'>This transfer requires additional identity verification. Let's check your camera first.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions to continue.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Allow Camera Permissions",
+        "on_next": "transfer_liveid_capture",
+        "on_error": "generic_error",
+        "on_check_resolution_fail": "transfer_qr_handoff",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920
+      },
+      {
+        "type": "form",
+        "id": "transfer_selfie_try_again",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed</p><p class='error-description'>We couldn't verify you. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "transfer_liveid_capture"
+      },
+      {
+        "type": "liveid_capture",
+        "id": "transfer_liveid_capture",
+        "check_resolution": true,
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "render_style": "iframe",
+        "on_success": "complete_transfer",
+        "on_fail": "transfer_selfie_try_again",
+        "on_check_resolution_fail": "transfer_qr_handoff",
+        "on_error": "generic_error",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920,
+        "authtype": "none",
+        "purpose": "auth",
+        "scopes": "wallet,selfie,liveness_score,face_compare_score"
+      },
+      {
+        "type": "qr_for_device_handoff",
+        "id": "transfer_qr_handoff",
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Switch Device</h1><p class='card-description'>Your device does not meet camera requirements. Continue on your mobile phone.</p></div></div><div class='card-content-steps'><div class='step'>{placeholder_for_qrcode}<div class='instructions'><p class='instructions-title'>How it works</p><ul class='instruction-list'><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Scan the QR code with the 1Kosmos Mobile App.</p></li><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Approve the request on your phone to continue.</p></li></ul></div></div></div></div><div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "complete_transfer",
+        "name": "Complete Transfer",
+        "config": {
+          "js_code": "let url = '<BANK_TRANSFER_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', faceCompareScore: params.nodes.transfer_liveid_capture ? params.nodes.transfer_liveid_capture.face_compare_score : null }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "transfer_success",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "transfer_success",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Transfer Complete</h1><p class='card-description'>Your transfer has been submitted successfully.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "is_terminal_node": true,
+        "return_summary": true
+      },
+      {
+        "type": "form",
+        "id": "recovery_welcome_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Recover Your Account</h1><p class='card-description'>Let's verify your identity to register a new trusted device.</p></div></div><div class='card-content-steps'><div class='step'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='logo' /><p class='step-label'>Selfie check</p></div><div class='step'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_document.svg' alt='logo' /><p class='step-label'>ID capture</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Start Verification",
+        "on_next": "recovery_camera_check",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "recovery_camera_check",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "check_resolution": true,
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Let's Check Your Camera</h1><p class='card-description'>We'll make sure your camera meets the requirements for a smooth verification.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions so we can run a quick camera check.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Allow Camera Permissions",
+        "on_next": "recovery_liveid_capture",
+        "on_error": "generic_error",
+        "on_check_resolution_fail": "recovery_qr_handoff",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920
+      },
+      {
+        "type": "form",
+        "id": "recovery_selfie_try_again",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed</p><p class='error-description'>We couldn't verify you. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "recovery_liveid_capture"
+      },
+      {
+        "type": "liveid_capture",
+        "id": "recovery_liveid_capture",
+        "check_resolution": true,
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "render_style": "iframe",
+        "on_success": "recovery_doc_intro",
+        "on_fail": "recovery_selfie_try_again",
+        "on_check_resolution_fail": "recovery_qr_handoff",
+        "on_error": "generic_error",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920,
+        "authtype": "none",
+        "purpose": "auth",
+        "scopes": "wallet,selfie,liveness_score,face_compare_score"
+      },
+      {
+        "type": "form",
+        "id": "recovery_doc_intro",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>ID Capture</h1><p class='card-description'>You'll need to provide a government-issued document to confirm your identity.</p></div></div><div class='card-content-steps'><div class='step'><div class='document-list'><div class='document-item'><p class='document-label'>Passport or Passport Card</p></div><div class='document-item'><p class='document-label'>Driver's License or State ID</p></div></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "recovery_doc_capture",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "recovery_doc_scan_retry",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed</p><p class='error-description'>We couldn't scan your document. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "recovery_doc_capture"
+      },
+      {
+        "type": "photo_id_capture",
+        "id": "recovery_doc_capture",
+        "render_style": "full_frame",
+        "check_resolution": true,
+        "on_success": "register_trusted_device",
+        "on_fail": "recovery_doc_scan_retry",
+        "on_check_resolution_fail": "recovery_qr_handoff",
+        "on_error": "generic_error",
+        "min_resolution_height": 1080,
+        "min_resolution_width": 1920
+      },
+      {
+        "type": "js",
+        "id": "register_trusted_device",
+        "name": "Register Trusted Device",
+        "config": {
+          "js_code": "let url = '<BANK_REGISTER_DEVICE_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', faceCompareScore: params.nodes.recovery_liveid_capture.face_compare_score, livenessScore: params.nodes.recovery_liveid_capture.liveness_score }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "recovery_success",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "recovery_success",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Device Registered</h1><p class='card-description'>Your new device has been registered as a trusted device for account recovery.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "is_terminal_node": true,
+        "return_summary": true
+      },
+      {
+        "type": "qr_for_device_handoff",
+        "id": "recovery_qr_handoff",
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Switch Device</h1><p class='card-description'>Your device does not meet camera requirements. Continue on your mobile phone.</p></div></div><div class='card-content-steps'><div class='step'>{placeholder_for_qrcode}<div class='instructions'><p class='instructions-title'>How it works</p><ul class='instruction-list'><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Scan the QR code with the 1Kosmos Mobile App.</p></li><li class='instruction-item'><span class='icon-wrapper success'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_green.svg' alt='ok' /></span><p>Approve the request on your phone to continue.</p></li></ul></div></div></div></div><div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          }
+        ],
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "generic_error",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>Verification Not Performed [generic error]</p><p class='error-description'>We couldn't complete your request. Please return to the browser tab where you began your journey and request a new session.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ]
+      }
+    ],
+    "isPublished": true,
+    "styleSheet": "body{background-color:#f7f7f7!important;font-family:'DM Sans-Regular',Helvetica,Arial,sans-serif!important}.consent-screen{display:flex;justify-content:center;align-items:center;width:100%;margin:0 0 30px}.content-wrapper{width:100%;max-width:1920px;position:relative}.error-card,.main-card{border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,.15);max-width:480px}.header{width:100%;display:flex;padding:13px 0 12px 40px;align-items:center;justify-content:flex-start;border-bottom:1px solid #e5e5e5;background-color:#0b2540}.header-logo{height:40px;filter:brightness(0) invert(1)}.bank-name{color:#fff;font-size:17px;font-weight:700;margin-left:14px}.main-card{background-color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:60px auto 20px}.card-content{padding:20px 40px;min-height:480px;display:flex;flex-direction:column;justify-content:space-between}.error-card-content{padding:20px 0;min-height:420px;display:flex;flex-direction:column;justify-content:space-between}.card-heading{text-align:left;width:100%}.card-title{color:#0b2540;font-size:26px;font-weight:700;line-height:1.4;margin-bottom:4px}.card-description{color:#414141;font-size:16px;font-weight:400;line-height:1.5}.card-content-steps,.error-card-content-steps{display:flex;justify-content:space-between;align-items:center;width:100%}.step{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}.step-label{font-size:12px;color:#6b7280;font-weight:500;margin-top:6px;text-align:center}.card-footer,.error-steps,.step-error{text-align:center}.card-footer{width:100%}.error-card{background-color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:480px;margin:60px auto 0}.error-footer-button{padding:0 40px}.error-steps{margin-bottom:15%}.error-label{margin:10px 10px 16px;font-size:18px;font-weight:600;color:#111827}.error-description{text-align:center;font-weight:400;line-height:1.5;font-size:15px;color:#374151;padding:0 28px}.btn-back,.btn-continue{cursor:pointer;font-size:17px;padding:18px 0;transition:background-color .25s;width:100%}.btn-continue{background-color:#0b2540;border:none;border-radius:12px;color:#fff;font-weight:700;margin-top:14px}.btn-continue:hover{background-color:#123a63}.btn-back{background-color:#f3f4f6;border:none;border-radius:12px;color:#6b7280;font-weight:500;margin-bottom:12px}.button-container{display:flex;flex-direction:column;gap:12px}.powered-by{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px}.powered-by p{font-weight:500;font-size:12px;color:#9ca3af}.instructions{display:flex;flex-direction:column;align-items:baseline;justify-content:center;width:100%}.instructions-title{font-size:16px;font-weight:600;color:#1f2937;text-align:left;margin-bottom:6px}.instruction-list{display:flex;flex-direction:column;align-items:baseline;padding:0;margin:0;list-style:none}.instruction-item{font-size:15px;font-weight:400;color:#374151;display:flex;gap:14px;padding:7px 7px 7px 0;align-items:center;text-align:left}.document-list{flex-direction:column;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}.document-item{background-color:#f8fafc;width:100%;height:52px;display:flex;flex-direction:row;align-items:center;justify-content:center;padding:0 18px;border-radius:10px;font-size:14px;font-weight:500;color:#1f2937;border:1px solid #e5e7eb}.camera-permission-note{background-color:#f8fafc;padding:20px;border-radius:14px;width:100%;gap:14px;display:flex;flex-direction:column;align-items:center;border:1px solid #e5e7eb}.camera-permission-text{font-size:16px;line-height:1.5;font-weight:400;color:#4b5563;text-align:center}.success-note{display:flex;align-items:center;background:#f0fdf4;min-height:56px;border-radius:6px;padding:10px;gap:10px;justify-content:center;font-weight:400;font-style:italic;font-size:15px;line-height:1.4;border:1px solid #bbf7d0}svg.qr-code{margin:30px 0}input[type=email]{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:12px 14px;font-size:16px;color:#111827;background:#fff;margin-top:4px}label{font-size:14px;font-weight:600;color:#374151;display:block;margin-top:16px;margin-bottom:2px}@media (max-width:480px){.error-card,.main-card{box-shadow:none;margin:0;width:100vw;border-radius:0}.card-content{padding:16px 22px 22px}.header{padding:12px 0 12px 22px}}"
+  }
+}
