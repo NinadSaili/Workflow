@@ -71,7 +71,7 @@
         "id": "route_onboarding_user",
         "name": "Route Onboarding User",
         "config": {
-          "js_code": "if (params.nodes.check_onboarding_user.respData.message === 'User not found') { next = 'onboarding_user_not_found'; } else { next = 'camera_check_onboarding'; } return {next};"
+          "js_code": "if (params.nodes.check_onboarding_user.respData.message === 'User not found') { next = 'onboarding_user_not_found'; } else { next = 'liveid_capture_onboarding'; } return {next};"
         },
         "on_success": "",
         "on_fail": "generic_error",
@@ -96,31 +96,6 @@
         ],
         "on_next_button_label": "Try Again",
         "on_next": "onboarding_email_form"
-      },
-      {
-        "type": "form",
-        "id": "camera_check_onboarding",
-        "header": {
-          "type": "html",
-          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
-        },
-        "footer": {
-          "type": "html",
-          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
-        },
-        "check_resolution": true,
-        "fields": [
-          {
-            "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Let's Check Your Camera</h1><p class='card-description'>We'll make sure your camera meets the requirements for a smooth verification.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions so we can run a quick camera check.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
-          }
-        ],
-        "on_next_button_label": "Allow Camera Permissions",
-        "on_next": "liveid_capture_onboarding",
-        "on_error": "generic_error",
-        "on_check_resolution_fail": "onboarding_qr_handoff",
-        "min_resolution_height": 1080,
-        "min_resolution_width": 1920
       },
       {
         "type": "form",
@@ -380,33 +355,8 @@
           }
         ],
         "on_next_button_label": "Continue",
-        "on_next": "transfer_camera_check",
-        "on_error": "generic_error"
-      },
-      {
-        "type": "form",
-        "id": "transfer_camera_check",
-        "header": {
-          "type": "html",
-          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
-        },
-        "footer": {
-          "type": "html",
-          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
-        },
-        "check_resolution": true,
-        "fields": [
-          {
-            "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Step-Up Verification Required</h1><p class='card-description'>This transfer requires additional identity verification. Let's check your camera first.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions to continue.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
-          }
-        ],
-        "on_next_button_label": "Allow Camera Permissions",
         "on_next": "transfer_liveid_capture",
-        "on_error": "generic_error",
-        "on_check_resolution_fail": "transfer_qr_handoff",
-        "min_resolution_height": 1080,
-        "min_resolution_width": 1920
+        "on_error": "generic_error"
       },
       {
         "type": "form",
@@ -557,7 +507,7 @@
         "id": "route_recovery_user",
         "name": "Route Recovery User",
         "config": {
-          "js_code": "if (params.nodes.check_recovery_user.respData.message === 'User not found') { next = 'recovery_user_not_found'; } else { next = 'recovery_camera_check'; } return {next};"
+          "js_code": "if (params.nodes.check_recovery_user.respData.message === 'User not found') { next = 'recovery_user_not_found'; } else { next = 'recovery_liveid_capture'; } return {next};"
         },
         "on_success": "",
         "on_fail": "generic_error",
@@ -582,31 +532,6 @@
         ],
         "on_next_button_label": "Try Again",
         "on_next": "recovery_email_form"
-      },
-      {
-        "type": "form",
-        "id": "recovery_camera_check",
-        "header": {
-          "type": "html",
-          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
-        },
-        "footer": {
-          "type": "html",
-          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
-        },
-        "check_resolution": true,
-        "fields": [
-          {
-            "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Let's Check Your Camera</h1><p class='card-description'>We'll make sure your camera meets the requirements for a smooth verification.</p></div></div><div class='card-content-steps'><div class='step'><div class='camera-permission-note'><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_selfie.svg' alt='camera' width='53px' /><p class='camera-permission-text'>Please allow camera permissions so we can run a quick camera check.</p></div></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
-          }
-        ],
-        "on_next_button_label": "Allow Camera Permissions",
-        "on_next": "recovery_liveid_capture",
-        "on_error": "generic_error",
-        "on_check_resolution_fail": "recovery_qr_handoff",
-        "min_resolution_height": 1080,
-        "min_resolution_width": 1920
       },
       {
         "type": "form",
