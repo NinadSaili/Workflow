@@ -118,6 +118,19 @@ function steps(current, total){
   return `<div class="steps">${dots}</div>`;
 }
 
+const FLOW_STEPS = {
+  onboarding: { total: 4, map: { 'email-lookup':1, 'camera-liveid':2, 'doc-intro':3, 'doc-capture':3, 'identity-verifying':4 } },
+  recovery:   { total: 5, map: { 'email-lookup':1, 'qr-recovery':2, 'camera-liveid':3, 'doc-intro':4, 'doc-capture':4, 'identity-verifying':5 } }
+};
+
+function updateStepIndicator(id){
+  const mount = document.querySelector('.card.active .steps-mount');
+  if (!mount) return;
+  const config = FLOW_STEPS[state.flow];
+  const current = config && config.map[id];
+  mount.innerHTML = current ? steps(current, config.total) : '';
+}
+
 function render(id, html, tag){
   const el = document.createElement('div');
   el.className = 'card';
@@ -127,7 +140,12 @@ function render(id, html, tag){
   return el;
 }
 
+let activeIntervals = [];
+function trackInterval(iv){ activeIntervals.push(iv); return iv; }
+function clearAllIntervals(){ activeIntervals.forEach(clearInterval); activeIntervals = []; }
+
 function show(id){
+  clearAllIntervals();
   document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
@@ -138,6 +156,14 @@ function stopCamera(){
   if (currentStream){
     currentStream.getTracks().forEach(t => t.stop());
     currentStream = null;
+  }
+}
+
+function cancelFlow(){
+  if (state.flow === 'recovery' || state.flow === 'transfer-stepup'){
+    show('dashboard');
+  } else {
+    show('welcome');
   }
 }
 
@@ -176,6 +202,7 @@ function goOnboardEmail(){ state.flow='onboarding'; show('email-lookup'); }
 render('email-lookup', `
   <div class="content">
     <h1 id="email-title">Confirm Your Email</h1>
+    <div class="steps-mount"></div>
     <p class="desc" id="email-desc">Enter your email address to continue.</p>
     <div class="field">
       <label>Email address</label>
@@ -198,6 +225,7 @@ function submitEmail(){
 render('camera-liveid', `
   <div class="content">
     <h1>Selfie & Liveness Check</h1>
+    <div class="steps-mount"></div>
     <p class="desc">Center your face in the frame and hold still. We'll verify liveness automatically.</p>
     <div class="camera-frame">
       <video id="liveid-video" autoplay playsinline muted></video>
@@ -208,6 +236,7 @@ render('camera-liveid', `
       <div class="oval-guide"><div class="oval"></div></div>
       <div class="cam-status" id="liveid-status">Initializing camera…</div>
     </div>
+    <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
   </div>
 `);
 
@@ -221,7 +250,7 @@ function startLiveId(screenId, nextScreen){
     const msgs = ['Detecting face…','Please hold still…','Checking liveness…','Verifying…'];
     let i = 0;
     status.textContent = msgs[0];
-    const iv = setInterval(()=>{
+    const iv = trackInterval(setInterval(()=>{
       i++;
       if (i < msgs.length){ status.textContent = msgs[i]; }
       else {
@@ -232,7 +261,7 @@ function startLiveId(screenId, nextScreen){
           if (liveIdNextTarget === 'identity-verifying') startVerifying();
         }, 700);
       }
-    }, 900);
+    }, 900));
   });
 }
 
@@ -240,6 +269,7 @@ function startLiveId(screenId, nextScreen){
 render('doc-intro', `
   <div class="content">
     <h1>ID Capture</h1>
+    <div class="steps-mount"></div>
     <p class="desc">You'll need a government-issued document to confirm your identity.</p>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div class="menu-item" style="cursor:default"><div class="icon">🛂</div><div><div class="t">Passport</div></div></div>
@@ -254,6 +284,7 @@ render('doc-intro', `
 render('doc-capture', `
   <div class="content">
     <h1>Scan Your ID</h1>
+    <div class="steps-mount"></div>
     <p class="desc">Place your document inside the frame. It will capture automatically.</p>
     <div class="camera-frame">
       <video id="doc-video" autoplay playsinline muted></video>
@@ -265,6 +296,7 @@ render('doc-capture', `
       <div class="scan-line"></div>
       <div class="cam-status" id="doc-status">Aligning document…</div>
     </div>
+    <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
   </div>
 `);
 
@@ -275,11 +307,11 @@ function startDocCapture(){
   startCamera(video, fallback).then(()=>{
     const msgs = ['Aligning document…','Reading document…','Extracting details…','Document captured ✓'];
     let i = 0; status.textContent = msgs[0];
-    const iv = setInterval(()=>{
+    const iv = trackInterval(setInterval(()=>{
       i++;
       if (i < msgs.length){ status.textContent = msgs[i]; }
-      else { clearInterval(iv); setTimeout(()=> show('identity-verifying'), 600); startVerifying(); }
-    }, 850);
+      else { clearInterval(iv); setTimeout(()=>{ show('identity-verifying'); startVerifying(); }, 600); }
+    }, 850));
   });
 }
 
@@ -287,6 +319,7 @@ function startDocCapture(){
 render('identity-verifying', `
   <div class="content" style="align-items:center;text-align:center">
     <h1>Verifying Your Identity</h1>
+    <div class="steps-mount"></div>
     <p class="desc">Comparing your selfie, document, and liveness result. This only takes a moment.</p>
     <div class="progress-ring">
       <svg width="110" height="110">
@@ -304,7 +337,7 @@ function startVerifying(){
   ring.setAttribute('stroke-dashoffset','289');
   check.style.display='none';
   let pct = 0;
-  const iv = setInterval(()=>{
+  const iv = trackInterval(setInterval(()=>{
     pct += 8;
     const offset = 289 - (289 * Math.min(pct,100) / 100);
     ring.setAttribute('stroke-dashoffset', offset);
@@ -318,7 +351,7 @@ function startVerifying(){
         if (state.flow === 'transfer-stepup') { show('transfer-verifying-done'); completeTransfer(); }
       }, 700);
     }
-  }, 140);
+  }, 140));
 }
 
 /* ================= SCREEN: ONBOARDING SUCCESS ================= */
@@ -364,6 +397,7 @@ function qrScreen(id, title, desc, nextLabel){
   return render(id, `
     <div class="content" style="align-items:center;text-align:center">
       <h1>${title}</h1>
+      <div class="steps-mount"></div>
       <p class="desc">${desc}</p>
       <div class="qr-box"><canvas id="${id}-canvas" width="180" height="180"></canvas></div>
       <p class="desc" id="${id}-status">Waiting for approval on your mobile device…</p>
@@ -565,7 +599,9 @@ show = function(id){
     state.flow = 'recovery';
     show('camera-liveid');
     startLiveId('camera-liveid', 'doc-intro');
+    return;
   }
+  updateStepIndicator(id);
 };
 
 /* ---------------- boot ---------------- */
