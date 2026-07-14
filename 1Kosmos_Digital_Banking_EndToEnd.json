@@ -1,7 +1,7 @@
 {
   "data": {
     "type": "idv-ial2",
-    "poiOn": false,
+    "poiOn": true,
     "version": "v1",
     "name": "1Kosmos_Digital_Banking_EndToEnd",
     "dvcId": "banking_dvc_sandbox",
@@ -122,7 +122,7 @@
         "id": "doc_capture",
         "render_style": "full_frame",
         "check_resolution": true,
-        "on_success": "ocr_review",
+        "on_success": "js_face_match",
         "on_fail": "doc_scan_retry",
         "on_check_resolution_fail": "qr_device_handoff",
         "on_error": "generic_error",
@@ -131,25 +131,11 @@
       },
 
       {
-        "type": "form",
-        "id": "ocr_review",
-        "fields": [
-          {
-            "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header bank-header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos Digital Bank' /><span class='bank-name'>1Kosmos Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Document Captured</h1><p class='card-description'>Your government ID has been securely captured and processed.</p></div></div><div class='card-content-steps'><div class='step'><div class='status-card success-status'><div class='status-icon'>&#10003;</div><div class='status-details'><p class='status-title'>OCR Extraction Complete</p><p class='status-desc'>Your document data has been extracted and encrypted. We are now performing a biometric face match against your selfie.</p></div></div><div class='ocr-notice'><p class='ocr-notice-text'>Please confirm the information captured from your ID is correct before continuing. If the scan was unclear, go back and rescan.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Secured by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='1Kosmos' /></div></div></div></section></div></main>"
-          }
-        ],
-        "on_next_button_label": "Confirm &amp; Continue",
-        "on_next": "js_face_match",
-        "on_error": "generic_error"
-      },
-
-      {
         "type": "js",
         "id": "js_face_match",
         "name": "Biometric Face Match",
         "config": {
-          "js_code": "var faceMatchScore = 92; var livenessScore = 95; var faceMatchPassed = (faceMatchScore >= 85 && livenessScore >= 80); var matchedAt = new Date().getTime(); var result = { faceMatchScore: faceMatchScore, livenessScore: livenessScore, faceMatchPassed: faceMatchPassed, matchedAt: matchedAt }; if (!faceMatchPassed) { next = 'face_match_failed'; } else { next = 'js_create_customer'; } result.next = next; return result;"
+          "js_code": "let faceCompareScore = params.nodes.liveid_capture.face_compare_score; let livenessScore = params.nodes.liveid_capture.liveness_score; let faceMatchPassed = (faceCompareScore >= 85 && livenessScore >= 80); if (!faceMatchPassed) { next = 'face_match_failed'; } else { next = 'js_create_customer'; } return { faceCompareScore, livenessScore, faceMatchPassed, next };"
         },
         "on_success": "",
         "on_fail": "face_match_failed",
@@ -489,7 +475,7 @@
         "id": "js_face_match_recovery",
         "name": "Recovery Biometric Face Match",
         "config": {
-          "js_code": "var faceMatchScore = 91; var livenessScore = 93; var faceMatchPassed = (faceMatchScore >= 85 && livenessScore >= 80); var matchedAt = new Date().getTime(); var result = { faceMatchScore: faceMatchScore, livenessScore: livenessScore, faceMatchPassed: faceMatchPassed, matchedAt: matchedAt }; if (!faceMatchPassed) { next = 'recovery_face_match_failed'; } else { next = 'js_register_device'; } result.next = next; return result;"
+          "js_code": "let faceCompareScore = params.nodes.recovery_liveid_capture.face_compare_score; let livenessScore = params.nodes.recovery_liveid_capture.liveness_score; let faceMatchPassed = (faceCompareScore >= 85 && livenessScore >= 80); if (!faceMatchPassed) { next = 'recovery_face_match_failed'; } else { next = 'js_register_device'; } return { faceCompareScore, livenessScore, faceMatchPassed, next };"
         },
         "on_success": "",
         "on_fail": "recovery_face_match_failed",
