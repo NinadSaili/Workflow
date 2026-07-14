@@ -35,6 +35,8 @@
   .btn-secondary{background:#f3f4f6;color:#374151}
   .btn-secondary:hover{background:#e5e7eb}
   .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+  .btn-link{background:none;color:#2563eb;font-weight:600;text-decoration:underline;padding:8px 16px}
+  .btn-link:hover{color:#1d4ed8}
   .spacer{flex:1}
   input[type=email],input[type=text],input[type=number]{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
   label{font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px}
@@ -76,6 +78,9 @@
 
   .qr-box{width:200px;height:200px;margin:8px auto;background:#fff;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:12px}
   .qr-box canvas{width:100%;height:100%}
+  .badge-secure{display:inline-block;font-size:12px;font-weight:600;color:var(--navy);background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:5px 10px;align-self:flex-start;margin:0 auto}
+  .qr-steps{margin:4px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px;text-align:left;font-size:14px;color:#374151;line-height:1.5}
+  .qr-refresh-note{font-size:11px;color:#9ca3af;margin-top:2px}
 
   .menu{display:flex;flex-direction:column;gap:10px}
   .menu-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid var(--border);cursor:pointer;transition:.15s;background:#fff;text-align:left}
@@ -152,8 +157,13 @@ let activeIntervals = [];
 function trackInterval(iv){ activeIntervals.push(iv); return iv; }
 function clearAllIntervals(){ activeIntervals.forEach(clearInterval); activeIntervals = []; }
 
+let activeTimeouts = [];
+function trackTimeout(t){ activeTimeouts.push(t); return t; }
+function clearAllTimeouts(){ activeTimeouts.forEach(clearTimeout); activeTimeouts = []; }
+
 function show(id){
   clearAllIntervals();
+  clearAllTimeouts();
   document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
@@ -193,14 +203,14 @@ async function startCamera(videoEl, fallbackEl){
 /* ---------------- demo state ---------------- */
 const state = { email: '', recipient: '', amount: '', flow: 'onboarding' };
 
-/* ================= SCREEN: WELCOME ================= */
+/* ================= SCREEN: WELCOME / LOG IN ================= */
 render('welcome', `
   <div class="content">
-    <h1>Open a Digital Bank Account</h1>
-    <p class="desc">Verify your identity in under a minute to open a new account, or sign in if you're already a customer.</p>
+    <h1>Log In</h1>
+    <p class="desc">Access your Digital Bank account securely — no password required.</p>
     <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="goOnboardEmail()">Open New Account</button>
-    <button class="btn btn-secondary" onclick="goLogin()">Sign In (Existing Customer)</button>
+    <button class="btn btn-primary" onclick="goLogin()">Existing User Login</button>
+    <button class="btn btn-link" onclick="goOnboardEmail()">Open a New Account</button>
   </div>
 `);
 
@@ -216,9 +226,9 @@ function goOnboardEmail(){
   show('email-lookup');
 }
 function goLogin(){
+  state.flow = 'login';
   state.emailContext = 'login';
-  document.getElementById('login-email').style.borderColor = '';
-  show('login');
+  show('qr-login');
 }
 function goBackToEmailEntry(){
   if (state.emailContext === 'login') goLogin();
@@ -303,13 +313,13 @@ function startLiveId(screenId, nextScreen){
         const toggle = document.getElementById('liveid-fail-toggle');
         if (toggle && toggle.checked){
           status.textContent = 'Liveness check failed ✕';
-          setTimeout(()=> showLiveIdFailure(), 700);
+          trackTimeout(setTimeout(()=> showLiveIdFailure(), 700));
         } else {
           status.textContent = 'Liveness confirmed ✓';
-          setTimeout(()=>{
+          trackTimeout(setTimeout(()=>{
             show(liveIdNextTarget);
             if (liveIdNextTarget === 'identity-verifying') startVerifying();
-          }, 700);
+          }, 700));
         }
       }
     }, 900));
@@ -418,9 +428,9 @@ function startDocCapture(){
         const toggle = document.getElementById('doc-fail-toggle');
         if (toggle && toggle.checked){
           status.textContent = 'Document scan failed ✕';
-          setTimeout(()=> show('doc-failed'), 600);
+          trackTimeout(setTimeout(()=> show('doc-failed'), 600));
         } else {
-          setTimeout(()=>{ show('identity-verifying'); startVerifying(); }, 600);
+          trackTimeout(setTimeout(()=>{ show('identity-verifying'); startVerifying(); }, 600));
         }
       }
     }, 850));
@@ -457,11 +467,11 @@ function startVerifying(){
       clearInterval(iv);
       ring.style.display='none';
       check.style.display='flex';
-      setTimeout(()=>{
+      trackTimeout(setTimeout(()=>{
         if (state.flow === 'onboarding') show('onboarding-success');
         if (state.flow === 'recovery') show('recovery-success');
         if (state.flow === 'transfer-stepup') { show('transfer-verifying-done'); completeTransfer(); }
-      }, 700);
+      }, 700));
     }
   }, 140));
 }
@@ -480,47 +490,30 @@ render('onboarding-success', `
   </div>
 `);
 
-/* ================= SCREEN: LOGIN ================= */
-render('login', `
-  <div class="content">
-    <h1>Sign In</h1>
-    <p class="desc">Enter your email to continue with passwordless sign-in.</p>
-    <div class="field">
-      <label>Email address</label>
-      <input type="email" id="login-email" placeholder="you@example.com" />
-    </div>
-    <p class="demo-hint">Demo tip: use fail@example.com to preview the account-not-found path.</p>
-    <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="submitLogin()">Continue</button>
-    <button class="btn btn-secondary" onclick="show('welcome')">Back</button>
-  </div>
-`);
-
-function submitLogin(){
-  const val = document.getElementById('login-email').value.trim();
-  if (!val || !val.includes('@')){ document.getElementById('login-email').style.borderColor='var(--red)'; return; }
-  state.email = val;
-  if (val.toLowerCase() === 'fail@example.com'){ show('account-not-found'); return; }
-  show('qr-login');
-  drawQr('qr-login-canvas');
-  simulateQrApproval('dashboard');
-}
-
 /* ================= SCREEN: QR PASSWORDLESS (shared drawer) ================= */
-function qrScreen(id, title, desc, nextLabel){
+function qrScreen(id, title, scanDesc, cancelOnclick){
+  const cancelBtn = cancelOnclick ? `<button class="btn btn-secondary" onclick="${cancelOnclick}">Cancel</button>` : '';
   return render(id, `
     <div class="content" style="align-items:center;text-align:center">
       <h1>${title}</h1>
       <div class="steps-mount"></div>
-      <p class="desc">${desc}</p>
+      <div class="badge-secure">Simple and secure</div>
       <div class="qr-box"><canvas id="${id}-canvas" width="180" height="180"></canvas></div>
+      <p class="desc" style="font-weight:700;color:var(--navy);margin-top:4px">Skip the Password</p>
+      <ol class="qr-steps">
+        <li>${scanDesc}</li>
+        <li>We'll confirm it's you with facial or biometric recognition in the 1Kosmos Mobile App.</li>
+        <li>Return here — you're all set!</li>
+      </ol>
       <p class="desc" id="${id}-status">Waiting for approval on your mobile device…</p>
+      <p class="qr-refresh-note">QR code refreshes every 60 seconds</p>
+      ${cancelBtn}
     </div>
   `);
 }
-qrScreen('qr-login', 'Scan to Sign In', 'Open the 1Kosmos Mobile App and scan this code to approve sign-in.');
-qrScreen('qr-recovery', 'Scan to Continue', 'Open the 1Kosmos Mobile App and scan this code to continue device recovery.');
-qrScreen('qr-stepup', 'Scan to Approve Transfer', 'Open the 1Kosmos Mobile App and scan this code, or continue below with a selfie check.');
+qrScreen('qr-login', 'Sign In', "Scan the QR code with your phone's camera.", "show('welcome')");
+qrScreen('qr-recovery', 'Continue Recovery', "Scan the QR code with your phone's camera.", "cancelFlow()");
+qrScreen('qr-stepup', 'Approve Transfer', "Scan the QR code with your phone's camera.", "cancelFlow()");
 
 function drawQr(canvasId){
   const c = document.getElementById(canvasId);
@@ -549,8 +542,8 @@ function drawQr(canvasId){
 
 function simulateQrApproval(nextScreen, statusId){
   const el = document.querySelector('.card.active [id$="-status"]');
-  setTimeout(()=>{ if (el) el.textContent = 'Approved on mobile device ✓'; }, 2200);
-  setTimeout(()=> show(nextScreen), 3000);
+  trackTimeout(setTimeout(()=>{ if (el) el.textContent = 'Approved on mobile device ✓'; }, 2200));
+  trackTimeout(setTimeout(()=> show(nextScreen), 3000));
 }
 
 /* ================= SCREEN: DASHBOARD ================= */
@@ -635,7 +628,7 @@ function startTransferStepup(){
 /* ================= SCREEN: TRANSFER VERIFYING DONE (placeholder target) ================= */
 render('transfer-verifying-done', `<div class="content"></div>`);
 function completeTransfer(){
-  setTimeout(()=> show('transfer-success'), 50);
+  trackTimeout(setTimeout(()=> show('transfer-success'), 50));
 }
 
 /* ================= SCREEN: TRANSFER SUCCESS ================= */
