@@ -1,7 +1,6 @@
 {
   "data": {
     "type": "idv-ial2",
-    "piiOn": false,
     "poiOn": true,
     "version": "v1",
     "name": "Digital_Banking_Demo",
