@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>1Kosmos Digital Bank — Demo Portal</title>
+<style>
+  :root{
+    --navy:#0b2540; --navy-2:#123a63; --bg:#f4f6f9; --card:#ffffff;
+    --text:#111827; --muted:#6b7280; --border:#e5e7eb;
+    --green:#15803d; --green-bg:#f0fdf4; --green-border:#bbf7d0;
+    --red:#b91c1c; --red-bg:#fef2f2; --red-border:#fecaca;
+    --amber:#92400e; --amber-bg:#fefce8; --amber-border:#fde68a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  .app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:var(--card);width:100%;max-width:440px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.12);overflow:hidden;display:none;flex-direction:column;min-height:600px}
+  .card.active{display:flex}
+  .bank-header{background:var(--navy);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:12px}
+  .bank-header .logo{width:32px;height:32px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800}
+  .bank-header .name{font-weight:700;font-size:16px;letter-spacing:.2px}
+  .bank-header .tag{margin-left:auto;font-size:11px;background:rgba(255,255,255,.15);padding:4px 8px;border-radius:20px}
+  .content{padding:28px 26px;display:flex;flex-direction:column;gap:16px;flex:1}
+  h1{font-size:22px;margin:0 0 4px;color:var(--navy)}
+  p.desc{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+  .steps{display:flex;gap:8px;margin-bottom:4px}
+  .step-dot{flex:1;height:4px;border-radius:2px;background:var(--border)}
+  .step-dot.done{background:var(--navy)}
+  .step-dot.current{background:var(--navy-2)}
+  .btn{cursor:pointer;border:none;border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700;width:100%;transition:.15s}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover{background:var(--navy-2)}
+  .btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+  .btn-secondary{background:#f3f4f6;color:#374151}
+  .btn-secondary:hover{background:#e5e7eb}
+  .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+  .spacer{flex:1}
+  input[type=email],input[type=text],input[type=number]{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
+  label{font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px}
+  .field{margin-bottom:2px}
+
+  .camera-frame{position:relative;width:100%;aspect-ratio:4/3;background:#0b1220;border-radius:14px;overflow:hidden;border:2px solid var(--border)}
+  .camera-frame video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .camera-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#9ca3af;background:#0b1220}
+  .camera-fallback .face-icon{font-size:56px}
+  .oval-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .oval-guide .oval{width:58%;height:78%;border:3px solid rgba(255,255,255,.55);border-radius:50%}
+  .oval-guide.doc .oval{width:82%;height:56%;border-radius:14px}
+  .scan-line{position:absolute;left:6%;right:6%;height:3px;background:linear-gradient(90deg,transparent,#22d3ee,transparent);animation:scan 1.8s linear infinite}
+  @keyframes scan{0%{top:12%}50%{top:85%}100%{top:12%}}
+  .cam-status{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#fff;font-size:13px;background:rgba(0,0,0,.45);padding:6px 0}
+
+  .progress-ring{width:110px;height:110px;margin:6px auto;position:relative}
+  .progress-ring svg{transform:rotate(-90deg)}
+  .progress-ring circle{fill:none;stroke-width:8}
+  .progress-ring .bg{stroke:#e5e7eb}
+  .progress-ring .fg{stroke:var(--navy);stroke-linecap:round;transition:stroke-dashoffset .2s linear}
+  .progress-ring .check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--green)}
+
+  .status-card{display:flex;align-items:center;gap:14px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:16px}
+  .status-card .icon{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+  .status-card .title{font-weight:700;color:#166534;margin:0;font-size:14px}
+  .status-card .sub{margin:2px 0 0;font-size:13px;color:#374151}
+
+  .warn-card{display:flex;align-items:center;gap:14px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:12px;padding:16px}
+  .warn-card .icon{width:36px;height:36px;border-radius:50%;background:#d97706;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+
+  .qr-box{width:200px;height:200px;margin:8px auto;background:#fff;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:12px}
+  .qr-box canvas{width:100%;height:100%}
+
+  .menu{display:flex;flex-direction:column;gap:10px}
+  .menu-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid var(--border);cursor:pointer;transition:.15s;background:#fff;text-align:left}
+  .menu-item:hover{border-color:var(--navy);background:#f8fafc}
+  .menu-item .icon{width:38px;height:38px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .menu-item .icon.red{background:var(--red)}
+  .menu-item .t{font-weight:700;font-size:14px;color:var(--text)}
+  .menu-item .s{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .balance-card{background:linear-gradient(135deg,var(--navy),#164a7a);color:#fff;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:4px}
+  .balance-card .label{font-size:12px;opacity:.75}
+  .balance-card .amount{font-size:30px;font-weight:800;letter-spacing:.5px}
+  .balance-card .acct{font-size:12px;opacity:.7;margin-top:6px}
+
+  .review-row{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .review-row:last-child{border-bottom:none}
+  .review-row .k{color:var(--muted)}
+  .review-row .v{font-weight:600}
+
+  .footer-note{font-size:11px;color:#9ca3af;text-align:center;padding:14px 26px;border-top:1px solid var(--border)}
+  .badge-demo{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;font-size:11px;padding:5px 12px;border-radius:20px;letter-spacing:.3px;opacity:.85;z-index:10}
+</style>
+</head>
+<body>
+<div class="badge-demo">SIMULATION — NO REAL VERIFICATION PERFORMED</div>
+<div class="app" id="app"></div>
+
+<script>
+/* ---------------- simple templating / screen engine ---------------- */
+const app = document.getElementById('app');
+let currentStream = null;
+
+function bankHeader(tag){
+  return `<div class="bank-header">
+    <div class="logo">1K</div>
+    <div class="name">1Kosmos Digital Bank</div>
+    <div class="tag">${tag || 'DEMO'}</div>
+  </div>`;
+}
+function footerNote(){
+  return `<div class="footer-note">Simulated flow for demonstration purposes only. No camera frames are analyzed, stored, or transmitted.</div>`;
+}
+function steps(current, total){
+  let dots = '';
+  for (let i=1;i<=total;i++){
+    dots += `<div class="step-dot ${i<current?'done':i===current?'current':''}"></div>`;
+  }
+  return `<div class="steps">${dots}</div>`;
+}
+
+function render(id, html, tag){
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.id = id;
+  el.innerHTML = bankHeader(tag) + html + footerNote();
+  app.appendChild(el);
+  return el;
+}
+
+function show(id){
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  stopCamera();
+}
+
+function stopCamera(){
+  if (currentStream){
+    currentStream.getTracks().forEach(t => t.stop());
+    currentStream = null;
+  }
+}
+
+async function startCamera(videoEl, fallbackEl){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    currentStream = stream;
+    videoEl.srcObject = stream;
+    videoEl.style.display = 'block';
+    fallbackEl.style.display = 'none';
+    return true;
+  }catch(err){
+    videoEl.style.display = 'none';
+    fallbackEl.style.display = 'flex';
+    return false;
+  }
+}
+
+/* ---------------- demo state ---------------- */
+const state = { email: '', recipient: '', amount: '', flow: 'onboarding' };
+
+/* ================= SCREEN: WELCOME ================= */
+render('welcome', `
+  <div class="content">
+    <h1>Open a Digital Bank Account</h1>
+    <p class="desc">Verify your identity in under a minute to open a new account, or sign in if you're already a customer.</p>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="goOnboardEmail()">Open New Account</button>
+    <button class="btn btn-secondary" onclick="show('login')">Sign In (Existing Customer)</button>
+  </div>
+`);
+
+function goOnboardEmail(){ state.flow='onboarding'; show('email-lookup'); }
+
+/* ================= SCREEN: EMAIL LOOKUP (shared) ================= */
+render('email-lookup', `
+  <div class="content">
+    <h1 id="email-title">Confirm Your Email</h1>
+    <p class="desc" id="email-desc">Enter your email address to continue.</p>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="email-input" placeholder="you@example.com" />
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="email-continue" onclick="submitEmail()">Continue</button>
+  </div>
+`);
+
+function submitEmail(){
+  const val = document.getElementById('email-input').value.trim();
+  if (!val || !val.includes('@')){ document.getElementById('email-input').style.borderColor = 'var(--red)'; return; }
+  state.email = val;
+  if (state.flow === 'onboarding') { show('camera-liveid'); startLiveId('camera-liveid', 'doc-intro'); }
+  if (state.flow === 'recovery') { show('camera-liveid'); startLiveId('camera-liveid', 'doc-intro'); }
+}
+
+/* ================= SCREEN: LIVEID CAPTURE ================= */
+render('camera-liveid', `
+  <div class="content">
+    <h1>Selfie & Liveness Check</h1>
+    <p class="desc">Center your face in the frame and hold still. We'll verify liveness automatically.</p>
+    <div class="camera-frame">
+      <video id="liveid-video" autoplay playsinline muted></video>
+      <div class="camera-fallback" id="liveid-fallback" style="display:flex">
+        <div class="face-icon">🙂</div>
+        <div style="font-size:13px">Camera preview unavailable — continuing in simulation mode</div>
+      </div>
+      <div class="oval-guide"><div class="oval"></div></div>
+      <div class="cam-status" id="liveid-status">Initializing camera…</div>
+    </div>
+  </div>
+`);
+
+let liveIdNextTarget = null;
+function startLiveId(screenId, nextScreen){
+  liveIdNextTarget = nextScreen;
+  const video = document.getElementById('liveid-video');
+  const fallback = document.getElementById('liveid-fallback');
+  const status = document.getElementById('liveid-status');
+  startCamera(video, fallback).then(()=>{
+    const msgs = ['Detecting face…','Please hold still…','Checking liveness…','Verifying…'];
+    let i = 0;
+    status.textContent = msgs[0];
+    const iv = setInterval(()=>{
+      i++;
+      if (i < msgs.length){ status.textContent = msgs[i]; }
+      else {
+        clearInterval(iv);
+        status.textContent = 'Liveness confirmed ✓';
+        setTimeout(()=>{
+          show(liveIdNextTarget);
+          if (liveIdNextTarget === 'identity-verifying') startVerifying();
+        }, 700);
+      }
+    }, 900);
+  });
+}
+
+/* ================= SCREEN: DOC INTRO ================= */
+render('doc-intro', `
+  <div class="content">
+    <h1>ID Capture</h1>
+    <p class="desc">You'll need a government-issued document to confirm your identity.</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="menu-item" style="cursor:default"><div class="icon">🛂</div><div><div class="t">Passport</div></div></div>
+      <div class="menu-item" style="cursor:default"><div class="icon">🪪</div><div><div class="t">Driver's License / State ID</div></div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="show('doc-capture'); startDocCapture()">Continue</button>
+  </div>
+`);
+
+/* ================= SCREEN: DOC CAPTURE ================= */
+render('doc-capture', `
+  <div class="content">
+    <h1>Scan Your ID</h1>
+    <p class="desc">Place your document inside the frame. It will capture automatically.</p>
+    <div class="camera-frame">
+      <video id="doc-video" autoplay playsinline muted></video>
+      <div class="camera-fallback" id="doc-fallback" style="display:flex">
+        <div class="face-icon">🪪</div>
+        <div style="font-size:13px">Camera preview unavailable — continuing in simulation mode</div>
+      </div>
+      <div class="oval-guide doc"><div class="oval"></div></div>
+      <div class="scan-line"></div>
+      <div class="cam-status" id="doc-status">Aligning document…</div>
+    </div>
+  </div>
+`);
+
+function startDocCapture(){
+  const video = document.getElementById('doc-video');
+  const fallback = document.getElementById('doc-fallback');
+  const status = document.getElementById('doc-status');
+  startCamera(video, fallback).then(()=>{
+    const msgs = ['Aligning document…','Reading document…','Extracting details…','Document captured ✓'];
+    let i = 0; status.textContent = msgs[0];
+    const iv = setInterval(()=>{
+      i++;
+      if (i < msgs.length){ status.textContent = msgs[i]; }
+      else { clearInterval(iv); setTimeout(()=> show('identity-verifying'), 600); startVerifying(); }
+    }, 850);
+  });
+}
+
+/* ================= SCREEN: IDENTITY VERIFYING ================= */
+render('identity-verifying', `
+  <div class="content" style="align-items:center;text-align:center">
+    <h1>Verifying Your Identity</h1>
+    <p class="desc">Comparing your selfie, document, and liveness result. This only takes a moment.</p>
+    <div class="progress-ring">
+      <svg width="110" height="110">
+        <circle class="bg" cx="55" cy="55" r="46"></circle>
+        <circle class="fg" id="verify-ring" cx="55" cy="55" r="46" stroke-dasharray="289" stroke-dashoffset="289"></circle>
+      </svg>
+      <div class="check" id="verify-check" style="display:none">✓</div>
+    </div>
+  </div>
+`);
+
+function startVerifying(){
+  const ring = document.getElementById('verify-ring');
+  const check = document.getElementById('verify-check');
+  ring.setAttribute('stroke-dashoffset','289');
+  check.style.display='none';
+  let pct = 0;
+  const iv = setInterval(()=>{
+    pct += 8;
+    const offset = 289 - (289 * Math.min(pct,100) / 100);
+    ring.setAttribute('stroke-dashoffset', offset);
+    if (pct >= 100){
+      clearInterval(iv);
+      ring.style.display='none';
+      check.style.display='flex';
+      setTimeout(()=>{
+        if (state.flow === 'onboarding') show('onboarding-success');
+        if (state.flow === 'recovery') show('recovery-success');
+        if (state.flow === 'transfer-stepup') { show('transfer-verifying-done'); completeTransfer(); }
+      }, 700);
+    }
+  }, 140);
+}
+
+/* ================= SCREEN: ONBOARDING SUCCESS ================= */
+render('onboarding-success', `
+  <div class="content">
+    <h1>Account Created</h1>
+    <div class="status-card">
+      <div class="icon">✓</div>
+      <div><p class="title">Identity Verified</p><p class="sub">Your Digital Bank account has been created successfully.</p></div>
+    </div>
+    <p class="desc">You can now sign in and start banking.</p>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="show('login')">Continue to Sign In</button>
+  </div>
+`);
+
+/* ================= SCREEN: LOGIN ================= */
+render('login', `
+  <div class="content">
+    <h1>Sign In</h1>
+    <p class="desc">Enter your email to continue with passwordless sign-in.</p>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="you@example.com" />
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="submitLogin()">Continue</button>
+    <button class="btn btn-secondary" onclick="show('welcome')">Back</button>
+  </div>
+`);
+
+function submitLogin(){
+  const val = document.getElementById('login-email').value.trim();
+  if (!val || !val.includes('@')){ document.getElementById('login-email').style.borderColor='var(--red)'; return; }
+  state.email = val;
+  show('qr-login');
+  drawQr('qr-login-canvas');
+  simulateQrApproval('dashboard');
+}
+
+/* ================= SCREEN: QR PASSWORDLESS (shared drawer) ================= */
+function qrScreen(id, title, desc, nextLabel){
+  return render(id, `
+    <div class="content" style="align-items:center;text-align:center">
+      <h1>${title}</h1>
+      <p class="desc">${desc}</p>
+      <div class="qr-box"><canvas id="${id}-canvas" width="180" height="180"></canvas></div>
+      <p class="desc" id="${id}-status">Waiting for approval on your mobile device…</p>
+    </div>
+  `);
+}
+qrScreen('qr-login', 'Scan to Sign In', 'Open the 1Kosmos Mobile App and scan this code to approve sign-in.');
+qrScreen('qr-recovery', 'Scan to Continue', 'Open the 1Kosmos Mobile App and scan this code to continue device recovery.');
+qrScreen('qr-stepup', 'Scan to Approve Transfer', 'Open the 1Kosmos Mobile App and scan this code, or continue below with a selfie check.');
+
+function drawQr(canvasId){
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+  const size = 12, cells = 15;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle = '#0b2540';
+  // deterministic pseudo-random pattern, purely decorative
+  let seed = 42;
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (let y=0;y<cells;y++){
+    for (let x=0;x<cells;x++){
+      if (rnd() > 0.55) ctx.fillRect(x*size, y*size, size-2, size-2);
+    }
+  }
+  // finder squares
+  [[0,0],[cells-3,0],[0,cells-3]].forEach(([fx,fy])=>{
+    ctx.fillStyle = '#0b2540';
+    ctx.fillRect(fx*size, fy*size, size*3, size*3);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(fx*size+size*0.4, fy*size+size*0.4, size*2.2, size*2.2);
+    ctx.fillStyle = '#0b2540';
+    ctx.fillRect(fx*size+size*0.9, fy*size+size*0.9, size*1.2, size*1.2);
+  });
+}
+
+function simulateQrApproval(nextScreen, statusId){
+  const el = document.querySelector('.card.active [id$="-status"]');
+  setTimeout(()=>{ if (el) el.textContent = 'Approved on mobile device ✓'; }, 2200);
+  setTimeout(()=> show(nextScreen), 3000);
+}
+
+/* ================= SCREEN: DASHBOARD ================= */
+render('dashboard', `
+  <div class="content">
+    <div class="balance-card">
+      <div class="label">Available Balance</div>
+      <div class="amount">$48,213.67</div>
+      <div class="acct">Checking •••• 4821</div>
+    </div>
+    <div class="menu">
+      <button class="menu-item" onclick="goTransfer()">
+        <div class="icon">💸</div>
+        <div><div class="t">Transfer Funds</div><div class="s">Send a high-value transfer with step-up verification</div></div>
+      </button>
+      <button class="menu-item" onclick="goRecovery()">
+        <div class="icon">🔐</div>
+        <div><div class="t">Recover / Register Device</div><div class="s">Verify identity to trust a new device</div></div>
+      </button>
+      <button class="menu-item" onclick="show('welcome')">
+        <div class="icon red">🚪</div>
+        <div><div class="t">Logout</div><div class="s">End this session</div></div>
+      </button>
+    </div>
+  </div>
+`);
+
+function goTransfer(){ show('transfer-form'); }
+function goRecovery(){ state.flow='recovery'; document.getElementById('email-title') && (document.getElementById('email-title').textContent='Confirm Your Email'); show('email-lookup-recovery-hint'); show('email-lookup'); state.flow='recovery'; }
+
+/* ================= SCREEN: TRANSFER FORM ================= */
+render('transfer-form', `
+  <div class="content">
+    <h1>Transfer Funds</h1>
+    <p class="desc">High-value transfers require additional identity verification.</p>
+    <div class="field">
+      <label>Recipient email</label>
+      <input type="email" id="xfer-recipient" placeholder="recipient@example.com" />
+    </div>
+    <div class="field">
+      <label>Amount (USD)</label>
+      <input type="number" id="xfer-amount" placeholder="75000" />
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="submitTransfer()">Review Transfer</button>
+    <button class="btn btn-secondary" onclick="show('dashboard')">Cancel</button>
+  </div>
+`);
+
+function submitTransfer(){
+  const r = document.getElementById('xfer-recipient').value.trim();
+  const a = document.getElementById('xfer-amount').value.trim();
+  if (!r || !a){ return; }
+  state.recipient = r; state.amount = a;
+  show('transfer-stepup-intro');
+}
+
+/* ================= SCREEN: TRANSFER STEP-UP INTRO ================= */
+render('transfer-stepup-intro', `
+  <div class="content">
+    <div class="warn-card">
+      <div class="icon">⚠️</div>
+      <div><p class="title" style="color:#92400e">Step-Up Verification Required</p><p class="sub">This transfer exceeds your standard limit and requires a biometric check.</p></div>
+    </div>
+    <div class="review-row"><div class="k">Recipient</div><div class="v" id="review-recipient"></div></div>
+    <div class="review-row"><div class="k">Amount</div><div class="v" id="review-amount"></div></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="startTransferStepup()">Verify with Selfie</button>
+  </div>
+`);
+
+function startTransferStepup(){
+  document.getElementById('review-recipient').textContent = state.recipient;
+  document.getElementById('review-amount').textContent = '$' + Number(state.amount || 0).toLocaleString();
+  state.flow = 'transfer-stepup';
+  show('camera-liveid');
+  startLiveId('camera-liveid', 'identity-verifying');
+}
+
+/* ================= SCREEN: TRANSFER VERIFYING DONE (placeholder target) ================= */
+render('transfer-verifying-done', `<div class="content"></div>`);
+function completeTransfer(){
+  setTimeout(()=> show('transfer-success'), 50);
+}
+
+/* ================= SCREEN: TRANSFER SUCCESS ================= */
+render('transfer-success', `
+  <div class="content">
+    <h1>Transfer Complete</h1>
+    <div class="status-card">
+      <div class="icon">✓</div>
+      <div><p class="title">Transaction Submitted</p><p class="sub" id="xfer-success-sub">Your transfer has been sent successfully.</p></div>
+    </div>
+    <div class="review-row"><div class="k">Recipient</div><div class="v" id="review-recipient-2"></div></div>
+    <div class="review-row"><div class="k">Amount</div><div class="v" id="review-amount-2"></div></div>
+    <div class="review-row"><div class="k">Reference</div><div class="v" id="xfer-ref"></div></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="show('dashboard')">Back to Dashboard</button>
+  </div>
+`);
+
+/* patch success screen values right before showing */
+const origShow = show;
+show = function(id){
+  origShow(id);
+  if (id === 'transfer-success'){
+    document.getElementById('review-recipient-2').textContent = state.recipient;
+    document.getElementById('review-amount-2').textContent = '$' + Number(state.amount || 0).toLocaleString();
+    document.getElementById('xfer-ref').textContent = 'TXN-' + Math.random().toString(36).slice(2,10).toUpperCase();
+  }
+  if (id === 'qr-login'){ drawQr('qr-login-canvas'); simulateQrApproval('dashboard'); }
+  if (id === 'qr-recovery'){ drawQr('qr-recovery-canvas'); simulateQrApproval('recovery-liveid-entry'); }
+};
+
+/* ================= RECOVERY FLOW ================= */
+function goRecoveryFixed(){
+  state.flow = 'recovery';
+  show('email-lookup');
+  document.getElementById('email-title').textContent = 'Recover Your Account';
+  document.getElementById('email-desc').textContent = "Enter your account email to verify your identity and register this device.";
+  document.getElementById('email-continue').setAttribute('onclick','submitRecoveryEmail()');
+}
+function submitRecoveryEmail(){
+  const val = document.getElementById('email-input').value.trim();
+  if (!val || !val.includes('@')){ document.getElementById('email-input').style.borderColor='var(--red)'; return; }
+  state.email = val;
+  show('qr-recovery');
+}
+
+render('recovery-liveid-entry', `<div class="content"></div>`);
+
+render('recovery-success', `
+  <div class="content">
+    <h1>Device Registered</h1>
+    <div class="status-card">
+      <div class="icon">✓</div>
+      <div><p class="title">Identity Verified</p><p class="sub">This device has been registered as trusted for account recovery.</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="show('dashboard')">Back to Dashboard</button>
+  </div>
+`);
+
+/* wire recovery entry points */
+function goRecovery(){ goRecoveryFixed(); }
+
+const showBase = show;
+show = function(id){
+  showBase(id);
+  if (id === 'recovery-liveid-entry'){
+    state.flow = 'recovery';
+    show('camera-liveid');
+    startLiveId('camera-liveid', 'doc-intro');
+  }
+};
+
+/* ---------------- boot ---------------- */
+show('welcome');
+</script>
+</body>
+</html>
