@@ -479,8 +479,6 @@ render('transfer-stepup-intro', `
 `);
 
 function startTransferStepup(){
-  document.getElementById('review-recipient').textContent = state.recipient;
-  document.getElementById('review-amount').textContent = '$' + Number(state.amount || 0).toLocaleString();
   state.flow = 'transfer-stepup';
   show('camera-liveid');
   startLiveId('camera-liveid', 'identity-verifying');
@@ -512,6 +510,10 @@ render('transfer-success', `
 const origShow = show;
 show = function(id){
   origShow(id);
+  if (id === 'transfer-stepup-intro'){
+    document.getElementById('review-recipient').textContent = state.recipient;
+    document.getElementById('review-amount').textContent = '$' + Number(state.amount || 0).toLocaleString();
+  }
   if (id === 'transfer-success'){
     document.getElementById('review-recipient-2').textContent = state.recipient;
     document.getElementById('review-amount-2').textContent = '$' + Number(state.amount || 0).toLocaleString();
