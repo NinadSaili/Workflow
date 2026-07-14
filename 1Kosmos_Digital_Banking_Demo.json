@@ -5,7 +5,7 @@
     "version": "v1",
     "name": "Digital_Banking_Demo",
     "tenantId": "6843d79e3b79c3268776cc63",
-    "dvcId": "<DVC_ID>",
+    "dvcId": "thedefaultdvcid_idproofing_demo",
     "nodes": [
       {
         "type": "form",
