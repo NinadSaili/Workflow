@@ -4,7 +4,7 @@
     "poiOn": true,
     "version": "v1",
     "name": "1Kosmos_Digital_Banking_EndToEnd",
-    "dvcId": "banking_dvc_sandbox",
+    "dvcId": "dvcid_banking_dvc_sandbox",
     "nodes": [
 
       {
