@@ -66,6 +66,14 @@
   .warn-card{display:flex;align-items:center;gap:14px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:12px;padding:16px}
   .warn-card .icon{width:36px;height:36px;border-radius:50%;background:#d97706;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
 
+  .error-card-mini{display:flex;align-items:center;gap:14px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:12px;padding:16px}
+  .error-card-mini .icon{width:36px;height:36px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+  .error-card-mini .title{font-weight:700;color:var(--red);margin:0;font-size:14px}
+  .error-card-mini .sub{margin:2px 0 0;font-size:13px;color:#374151}
+
+  .demo-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:#6b7280;cursor:pointer;padding:4px 0}
+  .demo-hint{font-size:11px;color:#9ca3af;margin:-8px 0 0}
+
   .qr-box{width:200px;height:200px;margin:8px auto;background:#fff;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:12px}
   .qr-box canvas{width:100%;height:100%}
 
@@ -192,11 +200,31 @@ render('welcome', `
     <p class="desc">Verify your identity in under a minute to open a new account, or sign in if you're already a customer.</p>
     <div class="spacer"></div>
     <button class="btn btn-primary" onclick="goOnboardEmail()">Open New Account</button>
-    <button class="btn btn-secondary" onclick="show('login')">Sign In (Existing Customer)</button>
+    <button class="btn btn-secondary" onclick="goLogin()">Sign In (Existing Customer)</button>
   </div>
 `);
 
-function goOnboardEmail(){ state.flow='onboarding'; show('email-lookup'); }
+function resetEmailScreen(){
+  document.getElementById('email-title').textContent = 'Confirm Your Email';
+  document.getElementById('email-desc').textContent = 'Enter your email address to continue.';
+  document.getElementById('email-continue').setAttribute('onclick','submitEmail()');
+  document.getElementById('email-input').style.borderColor = '';
+}
+function goOnboardEmail(){
+  state.flow='onboarding'; state.emailContext='onboarding';
+  resetEmailScreen();
+  show('email-lookup');
+}
+function goLogin(){
+  state.emailContext = 'login';
+  document.getElementById('login-email').style.borderColor = '';
+  show('login');
+}
+function goBackToEmailEntry(){
+  if (state.emailContext === 'login') goLogin();
+  else if (state.emailContext === 'recovery') goRecoveryFixed();
+  else goOnboardEmail();
+}
 
 /* ================= SCREEN: EMAIL LOOKUP (shared) ================= */
 render('email-lookup', `
@@ -208,6 +236,7 @@ render('email-lookup', `
       <label>Email address</label>
       <input type="email" id="email-input" placeholder="you@example.com" />
     </div>
+    <p class="demo-hint">Demo tip: use fail@example.com to preview the account-not-found path.</p>
     <div class="spacer"></div>
     <button class="btn btn-primary" id="email-continue" onclick="submitEmail()">Continue</button>
   </div>
@@ -217,9 +246,24 @@ function submitEmail(){
   const val = document.getElementById('email-input').value.trim();
   if (!val || !val.includes('@')){ document.getElementById('email-input').style.borderColor = 'var(--red)'; return; }
   state.email = val;
+  if (val.toLowerCase() === 'fail@example.com'){ show('account-not-found'); return; }
   if (state.flow === 'onboarding') { show('camera-liveid'); startLiveId('camera-liveid', 'doc-intro'); }
   if (state.flow === 'recovery') { show('camera-liveid'); startLiveId('camera-liveid', 'doc-intro'); }
 }
+
+/* ================= SCREEN: ACCOUNT NOT FOUND (unhappy path) ================= */
+render('account-not-found', `
+  <div class="content">
+    <h1>Account Not Found</h1>
+    <div class="error-card-mini">
+      <div class="icon">✕</div>
+      <div><p class="title">No Matching Account</p><p class="sub">We couldn't find an account associated with that email address.</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="goBackToEmailEntry()">Try Again</button>
+    <button class="btn btn-secondary" onclick="show('welcome')">Back to Start</button>
+  </div>
+`);
 
 /* ================= SCREEN: LIVEID CAPTURE ================= */
 render('camera-liveid', `
@@ -236,6 +280,7 @@ render('camera-liveid', `
       <div class="oval-guide"><div class="oval"></div></div>
       <div class="cam-status" id="liveid-status">Initializing camera…</div>
     </div>
+    <label class="demo-toggle"><input type="checkbox" id="liveid-fail-toggle" /> Simulate verification failure (demo control)</label>
     <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
   </div>
 `);
@@ -255,15 +300,53 @@ function startLiveId(screenId, nextScreen){
       if (i < msgs.length){ status.textContent = msgs[i]; }
       else {
         clearInterval(iv);
-        status.textContent = 'Liveness confirmed ✓';
-        setTimeout(()=>{
-          show(liveIdNextTarget);
-          if (liveIdNextTarget === 'identity-verifying') startVerifying();
-        }, 700);
+        const toggle = document.getElementById('liveid-fail-toggle');
+        if (toggle && toggle.checked){
+          status.textContent = 'Liveness check failed ✕';
+          setTimeout(()=> showLiveIdFailure(), 700);
+        } else {
+          status.textContent = 'Liveness confirmed ✓';
+          setTimeout(()=>{
+            show(liveIdNextTarget);
+            if (liveIdNextTarget === 'identity-verifying') startVerifying();
+          }, 700);
+        }
       }
     }, 900));
   });
 }
+
+function retryLiveId(){
+  show('camera-liveid');
+  startLiveId('camera-liveid', liveIdNextTarget);
+}
+
+function showLiveIdFailure(){
+  const titleEl = document.getElementById('liveid-failed-title');
+  const subEl = document.getElementById('liveid-failed-sub');
+  if (state.flow === 'transfer-stepup'){
+    titleEl.textContent = 'Transfer Declined';
+    subEl.textContent = 'Biometric verification failed. Your transfer was not completed.';
+  } else {
+    titleEl.textContent = 'Verification Not Performed';
+    subEl.textContent = "We couldn't verify your liveness. Please try again.";
+  }
+  show('liveid-failed');
+}
+
+/* ================= SCREEN: LIVEID FAILED (unhappy path) ================= */
+render('liveid-failed', `
+  <div class="content">
+    <h1 id="liveid-failed-title">Verification Not Performed</h1>
+    <div class="error-card-mini">
+      <div class="icon">✕</div>
+      <div><p class="title">Liveness Check Failed</p><p class="sub" id="liveid-failed-sub">We couldn't verify you. Please try again.</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="retryLiveId()">Try Again</button>
+    <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
+  </div>
+`);
 
 /* ================= SCREEN: DOC INTRO ================= */
 render('doc-intro', `
@@ -296,6 +379,26 @@ render('doc-capture', `
       <div class="scan-line"></div>
       <div class="cam-status" id="doc-status">Aligning document…</div>
     </div>
+    <label class="demo-toggle"><input type="checkbox" id="doc-fail-toggle" /> Simulate verification failure (demo control)</label>
+    <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
+  </div>
+`);
+
+function retryDocCapture(){
+  show('doc-capture');
+  startDocCapture();
+}
+
+/* ================= SCREEN: DOC CAPTURE FAILED (unhappy path) ================= */
+render('doc-failed', `
+  <div class="content">
+    <h1>Document Scan Failed</h1>
+    <div class="error-card-mini">
+      <div class="icon">✕</div>
+      <div><p class="title">Verification Not Performed</p><p class="sub">We couldn't read your document clearly. Please try again.</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="retryDocCapture()">Try Again</button>
     <button class="btn btn-secondary" onclick="cancelFlow()">Cancel</button>
   </div>
 `);
@@ -310,7 +413,16 @@ function startDocCapture(){
     const iv = trackInterval(setInterval(()=>{
       i++;
       if (i < msgs.length){ status.textContent = msgs[i]; }
-      else { clearInterval(iv); setTimeout(()=>{ show('identity-verifying'); startVerifying(); }, 600); }
+      else {
+        clearInterval(iv);
+        const toggle = document.getElementById('doc-fail-toggle');
+        if (toggle && toggle.checked){
+          status.textContent = 'Document scan failed ✕';
+          setTimeout(()=> show('doc-failed'), 600);
+        } else {
+          setTimeout(()=>{ show('identity-verifying'); startVerifying(); }, 600);
+        }
+      }
     }, 850));
   });
 }
@@ -364,7 +476,7 @@ render('onboarding-success', `
     </div>
     <p class="desc">You can now sign in and start banking.</p>
     <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="show('login')">Continue to Sign In</button>
+    <button class="btn btn-primary" onclick="goLogin()">Continue to Sign In</button>
   </div>
 `);
 
@@ -377,6 +489,7 @@ render('login', `
       <label>Email address</label>
       <input type="email" id="login-email" placeholder="you@example.com" />
     </div>
+    <p class="demo-hint">Demo tip: use fail@example.com to preview the account-not-found path.</p>
     <div class="spacer"></div>
     <button class="btn btn-primary" onclick="submitLogin()">Continue</button>
     <button class="btn btn-secondary" onclick="show('welcome')">Back</button>
@@ -387,6 +500,7 @@ function submitLogin(){
   const val = document.getElementById('login-email').value.trim();
   if (!val || !val.includes('@')){ document.getElementById('login-email').style.borderColor='var(--red)'; return; }
   state.email = val;
+  if (val.toLowerCase() === 'fail@example.com'){ show('account-not-found'); return; }
   show('qr-login');
   drawQr('qr-login-canvas');
   simulateQrApproval('dashboard');
@@ -563,15 +677,18 @@ show = function(id){
 /* ================= RECOVERY FLOW ================= */
 function goRecoveryFixed(){
   state.flow = 'recovery';
-  show('email-lookup');
+  state.emailContext = 'recovery';
   document.getElementById('email-title').textContent = 'Recover Your Account';
   document.getElementById('email-desc').textContent = "Enter your account email to verify your identity and register this device.";
   document.getElementById('email-continue').setAttribute('onclick','submitRecoveryEmail()');
+  document.getElementById('email-input').style.borderColor = '';
+  show('email-lookup');
 }
 function submitRecoveryEmail(){
   const val = document.getElementById('email-input').value.trim();
   if (!val || !val.includes('@')){ document.getElementById('email-input').style.borderColor='var(--red)'; return; }
   state.email = val;
+  if (val.toLowerCase() === 'fail@example.com'){ show('account-not-found'); return; }
   show('qr-recovery');
 }
 
