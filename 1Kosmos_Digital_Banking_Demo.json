@@ -5,7 +5,7 @@
     "poiOn": true,
     "version": "v1",
     "name": "Digital_Banking_Demo",
-    "tenantId": "<TENANT_ID>",
+    "tenantId": "6843d79e3b79c3268776cc63",
     "dvcId": "<DVC_ID>",
     "nodes": [
       {
@@ -26,8 +26,77 @@
           }
         ],
         "on_next_button_label": "Start Verification",
-        "on_next": "camera_check_onboarding",
+        "on_next": "onboarding_email_form",
         "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "onboarding_email_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Confirm Your Email</h1><p class='card-description'>Enter the email address associated with your Digital Bank invitation.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          },
+          {
+            "type": "email",
+            "required": "true",
+            "name": "email",
+            "label": "Email: "
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "check_onboarding_user",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "check_onboarding_user",
+        "name": "Check Onboarding User",
+        "config": {
+          "js_code": "let rootApi = 'https://sandbox.1kosmos.net'; let tenantId = '6843d79e3b79c3268776cc63'; let communityId = '69f5290924326a72be91cb09'; let url = rootApi + '/users-mgmt/tenant/' + tenantId + '/community/' + communityId + '/user/fetch_single_user_by_username'; let respData = null; await fetch(url, { method: 'POST', headers: { 'requestfromswagger': 'true', 'license': 'b18d6489-05fb-4d92-9254-56943d041ea3', 'keySecret': '<KEY_SECRET>', 'keyId': '<KEY_ID>', 'Content-Type': 'application/json' }, body: JSON.stringify({ 'authModule': '69f53cf5115a75ae0e838ac5', 'username': params.nodes.onboarding_email_form.email }) }) .then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "route_onboarding_user",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "route_onboarding_user",
+        "name": "Route Onboarding User",
+        "config": {
+          "js_code": "if (params.nodes.check_onboarding_user.respData.message === 'User not found') { next = 'onboarding_user_not_found'; } else { next = 'camera_check_onboarding'; } return {next};"
+        },
+        "on_success": "",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "onboarding_user_not_found",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>No Account Found</p><p class='error-description'>We couldn't find a pending account for that email. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "onboarding_email_form"
       },
       {
         "type": "form",
@@ -143,7 +212,7 @@
         "id": "doc_capture_onboarding",
         "render_style": "full_frame",
         "check_resolution": true,
-        "on_success": "create_customer_account",
+        "on_success": "make_request_id_onboarding",
         "on_fail": "doc_scan_retry_onboarding",
         "on_check_resolution_fail": "onboarding_qr_handoff",
         "on_error": "generic_error",
@@ -152,10 +221,32 @@
       },
       {
         "type": "js",
-        "id": "create_customer_account",
-        "name": "Create Customer Account",
+        "id": "make_request_id_onboarding",
+        "name": "Make Request ID",
         "config": {
-          "js_code": "let url = '<BANK_CREATE_CUSTOMER_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', faceCompareScore: params.nodes.liveid_capture_onboarding.face_compare_score, livenessScore: params.nodes.liveid_capture_onboarding.liveness_score }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+          "js_code": "function generateUUID() { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { const r = Math.random() * 16 | 0; const v = c === 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); }); } async function makeRequestId() { var uuid = generateUUID(); var date = new Date(); var current_time = Math.round(date.getTime() / 1000); var requestId = { ts: current_time, appid: 'com.postman.request', uuid: uuid }; var requestIdStr = JSON.stringify(requestId); let url = 'https://pilot-root.1kosmos.net/walletapi/ecdsa_helper/encrypt'; let otherPartyPublicKey = '<PUBLIC_KEY>'; let privateKey = '<PRIVATE_KEY>'; let respData = null; await fetch (url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'data': requestIdStr, 'publicKey': otherPartyPublicKey, 'privateKey': privateKey }) }) .then((response) => response.text()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let requestId = await makeRequestId(); return {requestId};"
+        },
+        "on_success": "make_acr_payload_onboarding",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "make_acr_payload_onboarding",
+        "name": "Make ACR Payload",
+        "config": {
+          "js_code": "async function makePayload() { let payload = { account: { authModuleId: '69f53cf5115a75ae0e838ac5', communityId: '69f5290924326a72be91cb09', tenantId: '6843d79e3b79c3268776cc63', uid: params.nodes.check_onboarding_user.respData.data.uid, username: params.nodes.check_onboarding_user.respData.data.username }, uid: params.nodes.check_onboarding_user.respData.data.uid, authModuleId: '69f53cf5115a75ae0e838ac5', username: params.nodes.check_onboarding_user.respData.data.username }; var dataStr = JSON.stringify(payload); let url = 'https://pilot-root.1kosmos.net/walletapi/ecdsa_helper/encrypt'; let otherPartyPublicKey = '<PUBLIC_KEY>'; let privateKey = '<PRIVATE_KEY>'; let respData = null; await fetch (url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'data': dataStr, 'publicKey': otherPartyPublicKey, 'privateKey': privateKey }) }) .then((response) => response.text()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let payload = await makePayload(); return {payload};"
+        },
+        "on_success": "create_acr_code_onboarding",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "create_acr_code_onboarding",
+        "name": "Create ACR Code",
+        "config": {
+          "js_code": "async function createACRCode(requestIdEnc, payloadEnc) { let rootApi = 'https://sandbox.1kosmos.net'; let communityName = '<COMMUNITY_NAME>'; let url = rootApi + '/api/r2/acr/community/' + communityName + '/code'; let respData = null; await fetch (url, { method: 'PUT', headers: { 'X-TenantTag': '<TENANT_TAG>', 'Content-Type': 'application/json', 'publickey': '<KEY_ID>', 'licensekey': 'b18d6489-05fb-4d92-9254-56943d041ea3', 'requestid': requestIdEnc }, body: JSON.stringify({ 'data': payloadEnc }) }) .then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let acrResp = await createACRCode(params.nodes.make_request_id_onboarding.requestId, params.nodes.make_acr_payload_onboarding.payload); return {acrResp};"
         },
         "on_success": "onboarding_success",
         "on_fail": "generic_error",
@@ -175,7 +266,7 @@
         "fields": [
           {
             "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Account Created</h1><p class='card-description'>Your identity has been verified and your account has been created. You can now sign in to Digital Bank.</p></div></div><div class='card-content-steps'><div class='success-note'><p>Note: Please continue to the login page to access your new account.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Verification Complete</h1><p class='card-description'>Your identity has been verified.</p></div></div><div class='card-content-steps'><div class='success-note'><p>Congratulations! Click <a href=\"{{nodes.create_acr_code_onboarding.acrResp.link}}\">here</a> to register your phone and start your passwordless banking journey.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
           }
         ],
         "is_terminal_node": true,
@@ -224,7 +315,7 @@
         "id": "check_customer_login",
         "name": "Check Customer Login",
         "config": {
-          "js_code": "let url = '<BANK_LOGIN_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', username: params.nodes.login_form.email }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+          "js_code": "let rootApi = 'https://sandbox.1kosmos.net'; let tenantId = '6843d79e3b79c3268776cc63'; let communityId = '69f5290924326a72be91cb09'; let url = rootApi + '/users-mgmt/tenant/' + tenantId + '/community/' + communityId + '/user/fetch_single_user_by_username'; let respData = null; await fetch(url, { method: 'POST', headers: { 'requestfromswagger': 'true', 'license': 'b18d6489-05fb-4d92-9254-56943d041ea3', 'keySecret': '<KEY_SECRET>', 'keyId': '<KEY_ID>', 'Content-Type': 'application/json' }, body: JSON.stringify({ 'authModule': '69f53cf5115a75ae0e838ac5', 'username': params.nodes.login_form.email }) }) .then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
         },
         "on_success": "route_login_result",
         "on_fail": "generic_error",
@@ -286,33 +377,11 @@
         "fields": [
           {
             "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Review Transfer</h1><p class='card-description'>We are reviewing your transfer request against our security policy.</p></div></div><div class='card-content-steps'><div class='step'><p class='camera-permission-text'>This may take a moment. Please do not close this window.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>High-Value Transfer</h1><p class='card-description'>This transfer requires additional identity verification before it can be completed.</p></div></div><div class='card-content-steps'><div class='step'><p class='camera-permission-text'>You'll be asked to verify your identity with a quick selfie check.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
           }
         ],
         "on_next_button_label": "Continue",
-        "on_next": "evaluate_transfer_policy",
-        "on_error": "generic_error"
-      },
-      {
-        "type": "js",
-        "id": "evaluate_transfer_policy",
-        "name": "Evaluate Transfer Policy",
-        "config": {
-          "js_code": "let url = '<BANK_POLICY_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>' }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
-        },
-        "on_success": "route_transfer_policy",
-        "on_fail": "generic_error",
-        "on_error": "generic_error"
-      },
-      {
-        "type": "js",
-        "id": "route_transfer_policy",
-        "name": "Route Transfer Policy Decision",
-        "config": {
-          "js_code": "if (params.nodes.evaluate_transfer_policy.respData.stepUpRequired === true) { next = 'transfer_camera_check'; } else { next = 'complete_transfer'; } return {next};"
-        },
-        "on_success": "",
-        "on_fail": "generic_error",
+        "on_next": "transfer_camera_check",
         "on_error": "generic_error"
       },
       {
@@ -443,8 +512,77 @@
           }
         ],
         "on_next_button_label": "Start Verification",
-        "on_next": "recovery_camera_check",
+        "on_next": "recovery_email_form",
         "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "recovery_email_form",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Confirm Your Email</h1><p class='card-description'>Enter the email address associated with your Digital Bank account.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+          },
+          {
+            "type": "email",
+            "required": "true",
+            "name": "email",
+            "label": "Email: "
+          }
+        ],
+        "on_next_button_label": "Continue",
+        "on_next": "check_recovery_user",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "check_recovery_user",
+        "name": "Check Recovery User",
+        "config": {
+          "js_code": "let rootApi = 'https://sandbox.1kosmos.net'; let tenantId = '6843d79e3b79c3268776cc63'; let communityId = '69f5290924326a72be91cb09'; let url = rootApi + '/users-mgmt/tenant/' + tenantId + '/community/' + communityId + '/user/fetch_single_user_by_username'; let respData = null; await fetch(url, { method: 'POST', headers: { 'requestfromswagger': 'true', 'license': 'b18d6489-05fb-4d92-9254-56943d041ea3', 'keySecret': '<KEY_SECRET>', 'keyId': '<KEY_ID>', 'Content-Type': 'application/json' }, body: JSON.stringify({ 'authModule': '69f53cf5115a75ae0e838ac5', 'username': params.nodes.recovery_email_form.email }) }) .then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+        },
+        "on_success": "route_recovery_user",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "route_recovery_user",
+        "name": "Route Recovery User",
+        "config": {
+          "js_code": "if (params.nodes.check_recovery_user.respData.message === 'User not found') { next = 'recovery_user_not_found'; } else { next = 'recovery_camera_check'; } return {next};"
+        },
+        "on_success": "",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "form",
+        "id": "recovery_user_not_found",
+        "header": {
+          "type": "html",
+          "html": "<header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header>"
+        },
+        "footer": {
+          "type": "html",
+          "html": "<div class='card-footer'><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div>"
+        },
+        "fields": [
+          {
+            "type": "html",
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='error-card-content'><div class='error-card-content-steps'><div class='error-steps'><img width='83' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_generic_error.svg' alt='logo' /><p class='error-label'>No Account Found</p><p class='error-description'>We couldn't find an account for that email. Please try again.</p></div></div><div class='card-footer'><div class='error-footer-button'>{form-buttons-placeholder}</div><div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></div></section></div></main>"
+          }
+        ],
+        "on_next_button_label": "Try Again",
+        "on_next": "recovery_email_form"
       },
       {
         "type": "form",
@@ -560,7 +698,7 @@
         "id": "recovery_doc_capture",
         "render_style": "full_frame",
         "check_resolution": true,
-        "on_success": "register_trusted_device",
+        "on_success": "make_request_id_recovery",
         "on_fail": "recovery_doc_scan_retry",
         "on_check_resolution_fail": "recovery_qr_handoff",
         "on_error": "generic_error",
@@ -569,10 +707,32 @@
       },
       {
         "type": "js",
-        "id": "register_trusted_device",
-        "name": "Register Trusted Device",
+        "id": "make_request_id_recovery",
+        "name": "Make Request ID",
         "config": {
-          "js_code": "let url = '<BANK_REGISTER_DEVICE_API>'; let respData = null; await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer <LICENSE_KEY>' }, body: JSON.stringify({ tenantId: '<TENANT_ID>', communityId: '<COMMUNITY_ID>', authModuleId: '<AUTH_MODULE_ID>', faceCompareScore: params.nodes.recovery_liveid_capture.face_compare_score, livenessScore: params.nodes.recovery_liveid_capture.liveness_score }) }).then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return {respData};"
+          "js_code": "function generateUUID() { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { const r = Math.random() * 16 | 0; const v = c === 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); }); } async function makeRequestId() { var uuid = generateUUID(); var date = new Date(); var current_time = Math.round(date.getTime() / 1000); var requestId = { ts: current_time, appid: 'com.postman.request', uuid: uuid }; var requestIdStr = JSON.stringify(requestId); let url = 'https://pilot-root.1kosmos.net/walletapi/ecdsa_helper/encrypt'; let otherPartyPublicKey = '<PUBLIC_KEY>'; let privateKey = '<PRIVATE_KEY>'; let respData = null; await fetch (url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'data': requestIdStr, 'publicKey': otherPartyPublicKey, 'privateKey': privateKey }) }) .then((response) => response.text()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let requestId = await makeRequestId(); return {requestId};"
+        },
+        "on_success": "make_acr_payload_recovery",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "make_acr_payload_recovery",
+        "name": "Make ACR Payload",
+        "config": {
+          "js_code": "async function makePayload() { let payload = { account: { authModuleId: '69f53cf5115a75ae0e838ac5', communityId: '69f5290924326a72be91cb09', tenantId: '6843d79e3b79c3268776cc63', uid: params.nodes.check_recovery_user.respData.data.uid, username: params.nodes.check_recovery_user.respData.data.username }, uid: params.nodes.check_recovery_user.respData.data.uid, authModuleId: '69f53cf5115a75ae0e838ac5', username: params.nodes.check_recovery_user.respData.data.username }; var dataStr = JSON.stringify(payload); let url = 'https://pilot-root.1kosmos.net/walletapi/ecdsa_helper/encrypt'; let otherPartyPublicKey = '<PUBLIC_KEY>'; let privateKey = '<PRIVATE_KEY>'; let respData = null; await fetch (url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'data': dataStr, 'publicKey': otherPartyPublicKey, 'privateKey': privateKey }) }) .then((response) => response.text()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let payload = await makePayload(); return {payload};"
+        },
+        "on_success": "create_acr_code_recovery",
+        "on_fail": "generic_error",
+        "on_error": "generic_error"
+      },
+      {
+        "type": "js",
+        "id": "create_acr_code_recovery",
+        "name": "Create ACR Code",
+        "config": {
+          "js_code": "async function createACRCode(requestIdEnc, payloadEnc) { let rootApi = 'https://sandbox.1kosmos.net'; let communityName = '<COMMUNITY_NAME>'; let url = rootApi + '/api/r2/acr/community/' + communityName + '/code'; let respData = null; await fetch (url, { method: 'PUT', headers: { 'X-TenantTag': '<TENANT_TAG>', 'Content-Type': 'application/json', 'publickey': '<KEY_ID>', 'licensekey': 'b18d6489-05fb-4d92-9254-56943d041ea3', 'requestid': requestIdEnc }, body: JSON.stringify({ 'data': payloadEnc }) }) .then((response) => response.json()).then((result) => {respData = result}).catch((error) => {throw new Error(error)}); return respData; } let acrResp = await createACRCode(params.nodes.make_request_id_recovery.requestId, params.nodes.make_acr_payload_recovery.payload); return {acrResp};"
         },
         "on_success": "recovery_success",
         "on_fail": "generic_error",
@@ -592,7 +752,7 @@
         "fields": [
           {
             "type": "html",
-            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Device Registered</h1><p class='card-description'>Your new device has been registered as a trusted device for account recovery.</p></div></div><div class='card-content-steps'></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
+            "html": "<main class='consent-screen'><div class='content-wrapper'><section class='main-card'><header class='header'><img class='header-logo' src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /><span class='bank-name'>Digital Bank</span></header><div class='card-content'><div class='card-heading'><div class='content'><h1 class='card-title'>Device Registered</h1><p class='card-description'>Your identity has been verified.</p></div></div><div class='card-content-steps'><div class='success-note'><p>Click <a href=\"{{nodes.create_acr_code_recovery.acrResp.link}}\">here</a> to finish registering this device as trusted for account recovery.</p></div></div></div><div class='card-footer'>{form-buttons-placeholder}<div class='powered-by'><p>Powered by</p><img src='https://static-lb-eu.1kosmos.net/idproofing/static_resources/wf_1kosmos_logo.svg' alt='logo' /></div></div></section></div></main>"
           }
         ],
         "is_terminal_node": true,
